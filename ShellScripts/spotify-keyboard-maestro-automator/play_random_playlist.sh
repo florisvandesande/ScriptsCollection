@@ -124,8 +124,6 @@ on run argv
 
   tell application "Spotify" to activate
   delay 1
-  open location playlistUri
-  delay 1
 
   tell application "Spotify"
     try
@@ -135,7 +133,20 @@ on run argv
         set shuffling to false
       end if
     end try
-    play
+    try
+      -- Start playback in the selected playlist context instead of resuming old context.
+      play track playlistUri
+    on error
+      -- Fallback path: navigate to the playlist, then retry direct context playback.
+      open location playlistUri
+      delay 1
+      try
+        play track playlistUri
+      on error
+        -- Last resort for older/broken clients: resume whatever Spotify can play.
+        play
+      end try
+    end try
   end tell
 end run
 APPLESCRIPT
