@@ -13,3 +13,4 @@ A small collection of automation scripts for macOS.
 - `AppleScripts/text-file-urls-open-in-chrome.scpt` - Reads URLs from a text file and opens them in Google Chrome tabs. Usage: Run compiled script from Script Editor/Finder. Requires: Google Chrome access.
 - `ShellScripts/set-finder-default-home.sh` - Sets Finder's default new-window folder to the configured home path. Usage: Run via terminal with `zsh`. Requires: macOS `defaults` and Finder restart.
 - `ShellScripts/set-finder-default-work.sh` - Sets Finder's default new-window folder to the configured work path. Usage: Run via terminal with `zsh`. Requires: macOS `defaults` and Finder restart.
+- `ShellScripts/spotify-keyboard-maestro-automator` - A set of scripts and files to play a random playlist on Spotify with a Keyboard Maestro macro to set playback destination. 

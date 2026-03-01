@@ -1,0 +1,13 @@
+# Playlist launcher settings
+PLAYLIST_FILE="./playlists.txt"
+
+# Spotify playback settings
+SPOTIFY_SHUFFLE="true"
+SPOTIFY_STARTUP_WAIT_SECONDS="2"
+
+# Files/paths (relative paths are resolved from bundle root)
+LOG_FILE="./logs/runner.log"
+LOCK_FILE="./tmp/run.lock"
+
+# Logging/notifications
+ENABLE_NOTIFICATIONS="true"

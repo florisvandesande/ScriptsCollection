@@ -1,0 +1,8 @@
+# Format:
+# playlist_name: playlist_url_or_uri
+
+My Life is a Movie: https://open.spotify.com/playlist/37i9dQZF1DX4OzrY981I1W?si=75bca0d977ca4dd8
+♡'s: https://open.spotify.com/playlist/7E4xNQkrAeEJoLNKPnkXgY?si=bc4f107e731a46ba
+Zaz: https://open.spotify.com/playlist/4deRe4tFNkRGsSeGPyhx4F?si=c38c7be0988b4bcf
+Barbara Pravi: https://open.spotify.com/playlist/46K4BnALkcAuiRCqwJ3va5?si=96066469b0124800
+Chansons!: https://open.spotify.com/playlist/4II1sQ3bh0tHePOKp2wHA2?si=b7a7b35d19fe4bd0
