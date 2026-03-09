@@ -1,0 +1,37 @@
+name: WhatsApp
+identifier: com.florisvandesande.popclip.whatsapp
+description: Start a new WhatsApp chat with the selected phone number.
+icon: preserve-color iconify:simple-icons:whatsapp
+app:
+  name: WhatsApp
+  link: https://www.whatsapp.com/
+options:
+  - type: string
+    identifier: countrycode
+    label: Default country code
+    defaultValue: "31"
+    description: Used for local numbers without + or 00 prefix.
+regex: '(?:\+|00)?[0-9][0-9\s().-]{5,}[0-9]'
+javascript: |
+  const raw = popclip.input.matchedText || popclip.input.text;
+  const hasPlusPrefix = /^\s*\+/.test(raw);
+  let number = raw.replace(/\D/g, "");
+  let isInternational = hasPlusPrefix;
+
+  if (number.startsWith("00")) {
+    number = number.slice(2);
+    isInternational = true;
+  }
+
+  const countryCode =
+    String(popclip.options.countrycode || "").replace(/\D/g, "") || "31";
+
+  if (!isInternational && number.startsWith("0")) {
+    number = countryCode + number.slice(1);
+  }
+
+  if (!/^\d{8,15}$/.test(number)) {
+    throw new Error("Please select a valid phone number.");
+  }
+
+  popclip.openUrl("https://wa.me/" + number);

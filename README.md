@@ -17,3 +17,6 @@ A small collection of automation scripts for macOS.
 - `ShellScripts/set-finder-default-work.sh` - Sets Finder's default new-window folder to the configured work path. Usage: Run via terminal with `zsh`. Requires: macOS `defaults` and Finder restart.
 - `ShellScripts/spotify-keyboard-maestro-automator` - A set of scripts and files to play a random playlist on Spotify with a Keyboard Maestro macro to set playback destination. 
 - `ShellScripts/print-random-favorite` - Print a random Favorite photo from Apple Photos on you printer with a preset at 13x18cm. 
+
+## PopClip Extensions
+- `popclip/whatsapp/WhatsApp.popclipext` - Starts a new WhatsApp chat using the selected phone number. Usage: Install by double-clicking in Finder, then select a number in any app and trigger PopClip. Requires: PopClip and WhatsApp (or WhatsApp Web in browser).
