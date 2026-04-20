@@ -6,7 +6,8 @@ A small collection of macOS automation tools, utility scripts, and PopClip exten
 
 ```text
 ├── AppleScripts/                               AppleScript utilities for Safari, Spotify, Chrome, and System Settings automation.
-├── ShellScripts/                               Shell helpers for Finder defaults, photo printing, and Spotify workflows.
+├── ShellScripts/                               Shell helpers for Finder defaults, media cleanup, photo printing, and Spotify workflows.
+│   ├── clean-jellyfin-artefacts.sh             Safe Jellyfin artefact cleanup script with dry-run default.
 │   └── spotify-keyboard-maestro-automator/     Supporting scripts, config, and macro files for Spotify playback automation.
 ├── SwiftScripts/                               Swift-based utilities and small local tools.
 │   └── PlantLabels/                            Generates 3D-printable plant label variants from plant names and reference STL files.
@@ -35,6 +36,11 @@ A small collection of macOS automation tools, utility scripts, and PopClip exten
 
 ## Shell Scripts
 
+- `ShellScripts/clean-jellyfin-artefacts.sh` - Safely finds and removes known Jellyfin artefact folders (such as `.trickplay` and `EpisodeName.trickplay`) from a chosen media root. Usage: drag a folder into Terminal as the final argument. Defaults to a safe preview mode (`--dry-run`), and only deletes when `--apply` is provided. Requires: macOS Terminal with `bash`, `find`, and `du`.
+  - Preview only (safe default): `./ShellScripts/clean-jellyfin-artefacts.sh "/Volumes/ExternalDisk/Media"`
+  - Delete artefacts: `./ShellScripts/clean-jellyfin-artefacts.sh --apply "/Volumes/ExternalDisk/Media"`
+  - Drag-and-drop compatibility: quoted escaped paths like `"/Volumes/My\ Disk/Show\ Name"` are accepted and normalized safely.
+  - Safety: only allowlisted Jellyfin artefact folder names are targeted, and media files are never targeted directly.
 - `ShellScripts/print-random-favorite.sh` - Prints a random Favorite photo from Apple Photos using a 13x18 cm preset. Usage: Run via terminal with `zsh`. Requires: Apple Photos access and a configured printer preset.
 - `ShellScripts/set-finder-default-home.sh` - Sets Finder's default new-window folder to the configured home path. Usage: Run via terminal with `zsh`. Requires: macOS `defaults` and Finder restart.
 - `ShellScripts/set-finder-default-work.sh` - Sets Finder's default new-window folder to the configured work path. Usage: Run via terminal with `zsh`. Requires: macOS `defaults` and Finder restart.
