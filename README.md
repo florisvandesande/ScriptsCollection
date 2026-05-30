@@ -6,6 +6,8 @@ A small collection of macOS automation tools, utility scripts, and PopClip exten
 
 ```text
 ├── AppleScripts/                               AppleScript utilities for Safari, Spotify, Chrome, and System Settings automation.
+├── Python Scripts/                             Local Python utilities that run on your Mac and are not required by the web app runtime.
+│   └── Spotify-sync-playlists.py               Signs in to two Spotify accounts and saves the source account's playlists into the destination account library.
 ├── ShellScripts/                               Shell helpers for Finder defaults, media cleanup, photo printing, and Spotify workflows.
 │   ├── clean-jellyfin-artefacts.sh             Safe Jellyfin artefact cleanup script with dry-run default.
 │   └── spotify-keyboard-maestro-automator/     Supporting scripts, config, and macro files for Spotify playback automation.
@@ -45,6 +47,62 @@ A small collection of macOS automation tools, utility scripts, and PopClip exten
 - `ShellScripts/set-finder-default-home.sh` - Sets Finder's default new-window folder to the configured home path. Usage: Run via terminal with `zsh`. Requires: macOS `defaults` and Finder restart.
 - `ShellScripts/set-finder-default-work.sh` - Sets Finder's default new-window folder to the configured work path. Usage: Run via terminal with `zsh`. Requires: macOS `defaults` and Finder restart.
 - `ShellScripts/spotify-keyboard-maestro-automator` - A Keyboard Maestro driven Spotify workflow with helper scripts for choosing a playback destination, starting a random playlist, and stopping playback. Usage: Configure the included Keyboard Maestro macro and shell scripts together. Requires: Keyboard Maestro, Spotify, and the files in this folder.
+
+## Python Scripts
+
+- `Python Scripts/Spotify-sync-playlists.py` - Signs in to two Spotify accounts with Spotify's browser login flow and saves playlists owned by the source account into the destination account's library.
+  - What changed: this script now opens the Spotify login in separate browsers, captures the OAuth callback locally, and then performs the playlist sync without manually copying access tokens.
+  - Why: manually collecting short-lived Spotify access tokens is error-prone and inconvenient, especially when the source and destination accounts live in different browser sessions.
+  - Before first use:
+    1. Open the Spotify Developer Dashboard and create an app.
+    2. Copy the app's Client ID.
+    3. Add this Redirect URI in the app settings: `http://127.0.0.1:8765/spotify/callback`
+    4. Save the app settings before running the script.
+  - Requirements:
+    - Python 3 with the `requests` package installed for your user account.
+    - Safari signed in to the source Spotify account, or ready for that login.
+    - Google Chrome signed in to the destination Spotify account, or ready for that login.
+  - Command:
+
+```bash
+python3 "/Users/florisvandesande/Repositories/ScriptsCollection/Python Scripts/Spotify-sync-playlists.py" --client-id "YOUR_SPOTIFY_CLIENT_ID"
+```
+
+  - Optional browser overrides:
+
+```bash
+python3 "/Users/florisvandesande/Repositories/ScriptsCollection/Python Scripts/Spotify-sync-playlists.py" \
+  --client-id "YOUR_SPOTIFY_CLIENT_ID" \
+  --source-browser safari \
+  --destination-browser chrome
+```
+
+  - Optional token output for debugging:
+
+```bash
+python3 "/Users/florisvandesande/Repositories/ScriptsCollection/Python Scripts/Spotify-sync-playlists.py" \
+  --client-id "YOUR_SPOTIFY_CLIENT_ID" \
+  --print-tokens
+```
+
+  - Expected output example:
+
+```json
+{
+  "found": 12,
+  "added": 3
+}
+```
+
+  - Notes:
+    - The script only syncs playlists owned by the source account itself.
+    - The destination account saves those playlists to its library; it does not create copies with new ownership.
+    - The login requests include `user-read-private` because the script reads the source account user id from Spotify's profile endpoint.
+    - The login requests also include `user-follow-read` and `user-follow-modify` because Spotify treats saving playlists to a user's library as a follow-style action.
+    - The login requests also include `playlist-modify-private` and `playlist-modify-public` because Spotify's newer library endpoint and older playlist follow endpoint do not always behave consistently for playlist saves.
+    - If the destination account does not allow profile lookup, the sync can still continue because the destination user id is not required for saving playlists.
+    - When Spotify rejects `PUT /me/library` with an insufficient scope error, the script falls back to the older playlist follow endpoint for each missing playlist.
+    - If Spotify rejects the login, first check that the redirect URI in the dashboard matches exactly, including `http`, host, port, and path.
 
 ## Swift Scripts
 
