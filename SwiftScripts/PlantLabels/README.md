@@ -30,9 +30,22 @@ The script first looks in `example/`, then falls back to a few older compatibili
 ## Before you run it
 
 1. Make sure you are on macOS.
-2. Make sure the font file exists at `/Library/Fonts/Merriweather_BoldItalic.ttf`.
-3. Make sure the three required reference STL files are present in `example/`.
-4. Open Terminal in this folder.
+2. This script works on macOS 13 and newer.
+3. Make sure the font file exists at `/Library/Fonts/Merriweather_BoldItalic.ttf`.
+4. Make sure the three required reference STL files are present in `example/`.
+5. Open Terminal in this folder.
+
+If Swift reports a module-cache error that mentions `.cache/clang/ModuleCache`, use one of these fixes:
+
+```bash
+mkdir -p ~/.cache/clang/ModuleCache
+```
+
+Or run the script with an explicit writable cache path:
+
+```bash
+swift -module-cache-path /tmp/swift-module-cache generate_plant_labels.swift --name "Agastache rugosa 'Black Adder'"
+```
 
 ## What the script exports
 
@@ -189,10 +202,10 @@ swift generate_plant_labels.swift \
 By default, the script writes files to:
 
 ```text
-output/
+/Users/<your-name>/Desktop/plantlabels/
 ```
 
-That folder lives next to `generate_plant_labels.swift`.
+The script creates that folder automatically if it does not exist yet.
 
 If you want a different folder, use `--output-dir`:
 

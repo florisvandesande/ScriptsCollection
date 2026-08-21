@@ -445,9 +445,9 @@ func resolved_script_url() -> URL {
 }
 
 func parse_cli_options() throws -> CLIOptions {
-    let default_output_directory = resolved_script_url()
-        .deletingLastPathComponent()
-        .appendingPathComponent("output", isDirectory: true)
+    let default_output_directory = FileManager.default.homeDirectoryForCurrentUser
+        .appendingPathComponent("Desktop", isDirectory: true)
+        .appendingPathComponent("plantlabels", isDirectory: true)
     var index = 1
     var plant_name: String?
     var input_file_url: URL?
@@ -540,8 +540,8 @@ func print_usage() {
         Generate three plant labels from one Latin plant name or from a text file with multiple names.
 
         Usage:
-          swift generate_plant_labels.swift --name "Agastache rugosa 'Black Adder'" [--format stl|3mf|obj|all] [--color-letters] [--color-border] [--output-dir output]
-          swift generate_plant_labels.swift --input-file plant-names.txt [--format stl|3mf|obj|all] [--color-letters] [--color-border] [--output-dir output]
+          swift generate_plant_labels.swift --name "Agastache rugosa 'Black Adder'" [--format stl|3mf|obj|all] [--color-letters] [--color-border] [--output-dir ~/Desktop/plantlabels]
+          swift generate_plant_labels.swift --input-file plant-names.txt [--format stl|3mf|obj|all] [--color-letters] [--color-border] [--output-dir ~/Desktop/plantlabels]
 
         Batch file format:
           One plant name per line.
@@ -836,6 +836,8 @@ func error_message(for error: Error) -> String {
 
 func load_reference_font() throws -> CTFont {
     let font_url = URL(fileURLWithPath: "/Library/Fonts/Merriweather_BoldItalic.ttf")
+    // The script runs headless on some Macs, so register the font file explicitly before AppKit glyph APIs use it.
+    CTFontManagerRegisterFontsForURL(font_url as CFURL, .process, nil)
     guard let descriptors = CTFontManagerCreateFontDescriptorsFromURL(font_url as CFURL) as? [CTFontDescriptor],
           let descriptor = descriptors.first
     else {
@@ -1271,18 +1273,27 @@ func render_line_path(_ line: String, font: CTFont) -> (path: NSBezierPath, boun
 
         let run_attributes = CTRunGetAttributes(run) as NSDictionary
         let run_font = run_attributes[kCTFontAttributeName as String] as! CTFont
+        let run_ns_font = ns_font(from: run_font)
 
         for index in 0..<glyph_count {
-            guard let glyph_path = CTFontCreatePathForGlyph(run_font, glyphs[index], nil) else {
-                continue
-            }
-            let bezier = NSBezierPath(cgPath: glyph_path)
+            let bezier = NSBezierPath()
+            bezier.move(to: .zero)
+            bezier.append(withCGGlyph: glyphs[index], in: run_ns_font)
             let placed = transformed_copy(of: bezier, translate_x: positions[index].x, translate_y: positions[index].y)
             line_path.append(placed)
         }
     }
 
     return (line_path, line_path.bounds)
+}
+
+func ns_font(from ct_font: CTFont) -> NSFont {
+    let font_name = CTFontCopyPostScriptName(ct_font) as String
+    let font_size = CTFontGetSize(ct_font)
+    guard let font = NSFont(name: font_name, size: font_size) else {
+        fatalError("The installed font '\(font_name)' could not be loaded through AppKit.")
+    }
+    return font
 }
 
 func transformed_copy(
